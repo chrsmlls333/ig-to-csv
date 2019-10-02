@@ -1,0 +1,22 @@
+{
+  "name": "ig-to-csv",
+  "version": "1.0.0",
+  "description": "simple and incomplete track data converter from .ig (CERN Data) to csv tables",
+  "main": "ig-to-csv.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chris Eugene Mills",
+  "license": "ISC",
+  "bin": {
+    "ig-to-csv": "ig-to-csv.js"
+  },
+  "dependencies": {
+    "fast-csv": "^3.4.0",
+    "flat": "^4.1.0",
+    "jszip": "^3.2.2",
+    "make-dir": "^3.0.0",
+    "minimist": "^1.2.0",
+    "three": "0.92.0"
+  }
+}
