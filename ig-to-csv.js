@@ -32,18 +32,22 @@ if (![".ig", ".json", ""].includes(extension)) {
 // Process
 if (extension === ".ig") {
   console.log("Welcome to hell...");
-  processZIP(filename);
+  processZIP(filename, argv.hasOwnProperty('combine'));
 } else {
   console.log("The event horizon approaches...");
-  //Load File // '../sample/Zee_0/Events/Run_140401/Event_91126796'
-  const data = fs.readFileSync(filename, "utf8");
-  processJSON(filename, data);
+  processSingleEvent(filename);
 }
 
 return /////////////////////////////////////////////////////////////////////////
 
+async function processSingleEvent( _filename ) {
+  //Load File // '../sample/Zee_0/Events/Run_140401/Event_91126796'
+  const data = fs.readFileSync(_filename, "utf8");
+  const curveData = await processJSON(data);
+  await writeCSV(_filename, curveData);
+}
 
-async function processZIP( _filename ) {
+async function processZIP( _filename, _combine = false ) {
   //Read ZIP
   const zipBuffer = await fsPromises.readFile( _filename );
   const zip = await JSZip.loadAsync(zipBuffer);
@@ -52,17 +56,32 @@ async function processZIP( _filename ) {
   // console.log(keys);
 
   //Process subfiles
+  let allCurves = [];
   for (let key of keys) {
     const data = await zip.file(key).async("string");
     const eventName = path.basename(_filename, ".ig") + '-' +
                       key.split(path.posix.sep).filter(word => word != "Events").join('-');
     console.log(eventName);
-    await processJSON(eventName, data);
+    let curveData = await processJSON(data);
+    if (_combine) {
+      allCurves = allCurves.concat(curveData);
+      console.log("");
+    } else {
+      //Write each if need be
+      await writeCSV(eventName, curveData);
+    }
   }
+
+  //Write all
+  if (_combine) {
+    await writeCSV(_filename, allCurves);
+  }
+
+  //
 }
 
 
-async function processJSON( _filename, _JSONstring ) {
+async function processJSON( _JSONstring ) {
 
   //Cleanup File
   const cleanupData = function(d) {
@@ -168,9 +187,13 @@ async function processJSON( _filename, _JSONstring ) {
     curves.push(bezierData);
   }
   // Now we have all the data we can mine from the tracks...
+  return curves;
+}
 
 
+async function writeCSV( _filename, _data ) {
   // WRITE OUTPUT //////////////////////////////////////////////////////////////
+  // Expects an array of objects for each line
 
   const folderpath = path.join(process.cwd(), "ig-to-csv-output");
   const csvpath = path.join(folderpath, path.basename(_filename) + ".csv");
@@ -181,7 +204,7 @@ async function processJSON( _filename, _JSONstring ) {
   //Write!
   const ws = fs.createWriteStream(csvpath);
   fastcsv
-    .write(curves, { headers: true })
+    .write(_data, { headers: true })
     .pipe(ws);
 
   console.log("Finished!\nWritten to " + path.relative(process.cwd(), csvpath) + '\n');
