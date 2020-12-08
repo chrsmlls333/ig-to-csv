@@ -12,7 +12,7 @@
     "ig-to-csv": "ig-to-csv.js"
   },
   "dependencies": {
-    "fast-csv": "^3.4.0",
+    "fast-csv": "^4.3.6",
     "flat": "^4.1.0",
     "jszip": "^3.2.2",
     "make-dir": "^3.0.0",
