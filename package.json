@@ -14,7 +14,7 @@
   "dependencies": {
     "fast-csv": "^3.4.0",
     "flat": "^4.1.0",
-    "jszip": "^3.2.2",
+    "jszip": "^3.7.0",
     "make-dir": "^3.0.0",
     "minimist": "^1.2.2",
     "three": "0.92.0"
