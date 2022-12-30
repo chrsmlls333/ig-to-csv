@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "fast-csv": "^3.4.0",
-    "flat": "^4.1.0",
+    "flat": "^5.0.1",
     "jszip": "^3.2.2",
     "make-dir": "^3.0.0",
     "minimist": "^1.2.2",
